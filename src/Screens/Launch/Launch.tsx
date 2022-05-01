@@ -1,15 +1,18 @@
 import { View, Image, Text } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppDimensions from "../../Constants/AppDimensions";
 import Backdrop from "../../Components/Backdrop";
 import DefaultTheme from "../../Constants/DefaultTheme";
 import { SendIcon } from "../../Constants/AppIcons";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import Animated, {
+  Easing,
+  EasingNode,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
 
@@ -121,22 +124,18 @@ const ExploreIcon = ({
 const Launch = (props: { navigation: StackNavigationHelpers<any> }) => {
   const text_opacity = useSharedValue(0);
   const text_translate_y = useSharedValue(50);
-  useEffect(() => {
-    setTimeout(() => {
-      text_opacity.value = 1;
-      text_translate_y.value = 0;
-    }, 200);
-
-    return () => {};
-  }, []);
+  const [isVisible, setVisible] = useState(false);
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      opacity: withSpring(text_opacity.value, { damping: 90, velocity: 50 }),
+      opacity: withTiming(text_opacity.value, {
+        duration: 300,
+        easing: Easing.ease,
+      }),
       transform: [
         {
-          translateY: withSpring(text_translate_y.value, {
-            damping: 90,
-            velocity: 50,
+          translateY: withTiming(text_opacity.value, {
+            duration: 300,
+            easing: Easing.ease,
           }),
         },
       ],
@@ -148,47 +147,62 @@ const Launch = (props: { navigation: StackNavigationHelpers<any> }) => {
       <LotusIcon size={AppDimensions.width / 8} />
       <Image
         source={require("../../assets/images/launch.jpg")}
-        style={{ width: "100%", height: AppDimensions.height }}
-        resizeMode={"cover"}
-      />
-      <View
         style={{
+          width: "100%",
+          height: AppDimensions.height,
           position: "absolute",
-          zIndex: 2,
-          elevation: 2,
-          top: AppDimensions.height / 2.5,
-          paddingLeft: 30,
         }}
-      >
-        <Animated.Text
+        resizeMode={"cover"}
+        onLoadEnd={() => {
+          setVisible(true);
+          setTimeout(() => {
+            text_opacity.value = 1;
+            text_translate_y.value = 0;
+          }, 750);
+        }}
+      />
+      {isVisible ? (
+        <Animated.View
           style={[
-            {
-              fontSize: 54,
-              fontFamily: "Times New Roman",
-              color: DefaultTheme.colors.accent,
-              marginTop: 7.5,
-              fontWeight: "500",
-            },
             animatedStyles,
+            {
+              // position: "absolute",
+              zIndex: 2,
+              elevation: 2,
+              top: AppDimensions.height / 2.5,
+              paddingLeft: 30,
+            },
           ]}
         >
-          {"Travelling"}
-        </Animated.Text>
-        <Animated.Text
-          style={[
-            {
-              fontSize: 54,
-              fontFamily: "Times New Roman",
-              color: DefaultTheme.colors.accent,
-              marginTop: 7.5,
-              fontWeight: "500",
-            },
-            animatedStyles,
-          ]}
-        >
-          {"Guide"}
-        </Animated.Text>
-      </View>
+          <Animated.Text
+            style={[
+              {
+                fontSize: 54,
+                fontFamily: "Times New Roman",
+                color: DefaultTheme.colors.accent,
+                marginTop: 7.5,
+                fontWeight: "500",
+              },
+              ,
+            ]}
+          >
+            {"Travelling"}
+          </Animated.Text>
+          <Animated.Text
+            style={[
+              {
+                fontSize: 54,
+                fontFamily: "Times New Roman",
+                color: DefaultTheme.colors.accent,
+                marginTop: 7.5,
+                fontWeight: "500",
+              },
+            ]}
+          >
+            {"Guide"}
+          </Animated.Text>
+        </Animated.View>
+      ) : null}
       <ExploreIcon navigation={props.navigation} />
       <Backdrop />
     </View>
