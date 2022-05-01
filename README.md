@@ -1,8 +1,8 @@
 ### Inspiration
 
-👩🏻‍🦰 : Syaiful Rijalr
+👩🏻‍🦰 : Anastasia
 
-🔗 : https://www.behance.net/gallery/17504644/Finance-Mobile-App
+🔗 : https://dribbble.com/shots/17504644-Travel-service-Mobile-App
 
 ### Feel Free to Use
 

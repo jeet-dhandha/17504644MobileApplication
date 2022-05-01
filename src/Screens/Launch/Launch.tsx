@@ -1,8 +1,7 @@
 import { View, Image, Text } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import AppDimensions from "../../Constants/AppDimensions";
 import Backdrop from "../../Components/Backdrop";
-import { size } from "lodash";
 import DefaultTheme from "../../Constants/DefaultTheme";
 import { SendIcon } from "../../Constants/AppIcons";
 import { TapGestureHandler } from "react-native-gesture-handler";
@@ -12,14 +11,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import {
-  NavigationHelpers,
-  StackActionHelpers,
-} from "@react-navigation/native";
-import {
-  StackNavigationOptions,
-  StackNavigationProp,
-} from "@react-navigation/stack";
 import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
 
 const LotusIcon = ({ size }: { size: number }) => (
@@ -128,6 +119,30 @@ const ExploreIcon = ({
   );
 };
 const Launch = (props: { navigation: StackNavigationHelpers<any> }) => {
+  const text_opacity = useSharedValue(0);
+  const text_translate_y = useSharedValue(50);
+  useEffect(() => {
+    setTimeout(() => {
+      text_opacity.value = 1;
+      text_translate_y.value = 0;
+    }, 200);
+
+    return () => {};
+  }, []);
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      opacity: withSpring(text_opacity.value, { damping: 90, velocity: 50 }),
+      transform: [
+        {
+          translateY: withSpring(text_translate_y.value, {
+            damping: 90,
+            velocity: 50,
+          }),
+        },
+      ],
+    };
+  });
+
   return (
     <View style={{ width: AppDimensions.width, height: AppDimensions.height }}>
       <LotusIcon size={AppDimensions.width / 8} />
@@ -145,28 +160,34 @@ const Launch = (props: { navigation: StackNavigationHelpers<any> }) => {
           paddingLeft: 30,
         }}
       >
-        <Text
-          style={{
-            fontSize: 54,
-            fontFamily: "Times New Roman",
-            color: DefaultTheme.colors.accent,
-            marginTop: 7.5,
-            fontWeight: "500",
-          }}
+        <Animated.Text
+          style={[
+            {
+              fontSize: 54,
+              fontFamily: "Times New Roman",
+              color: DefaultTheme.colors.accent,
+              marginTop: 7.5,
+              fontWeight: "500",
+            },
+            animatedStyles,
+          ]}
         >
           {"Travelling"}
-        </Text>
-        <Text
-          style={{
-            fontSize: 54,
-            fontFamily: "Times New Roman",
-            color: DefaultTheme.colors.accent,
-            marginTop: 7.5,
-            fontWeight: "500",
-          }}
+        </Animated.Text>
+        <Animated.Text
+          style={[
+            {
+              fontSize: 54,
+              fontFamily: "Times New Roman",
+              color: DefaultTheme.colors.accent,
+              marginTop: 7.5,
+              fontWeight: "500",
+            },
+            animatedStyles,
+          ]}
         >
           {"Guide"}
-        </Text>
+        </Animated.Text>
       </View>
       <ExploreIcon navigation={props.navigation} />
       <Backdrop />
